@@ -127,12 +127,14 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="my_int.c" />
     <ClCompile Include="queue.c" />
     <ClCompile Include="main.c" />
     <ClCompile Include="stack.c" />
     <ClCompile Include="token.c" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="my_int.h" />
     <ClInclude Include="queue.h" />
     <ClInclude Include="stack.h" />
     <ClInclude Include="token.h" />
