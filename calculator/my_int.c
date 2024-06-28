@@ -1,5 +1,6 @@
 #include "my_int.h"
 
+
 my_int* init_int(int n) {
 	my_int* number = (my_int*)malloc(sizeof(my_int));
 	number->positive = (n >= 0);
@@ -28,7 +29,15 @@ my_int* init_int(int n) {
 }
 
 
+bool is_zero(my_int* n) {
+	return n->head->digit == 0;
+}
+
+
 bool is_bigger(my_int* n1, my_int* n2) { 
+	if (is_zero(n1) && is_zero(n2)) {
+		return false;
+	}
 	if (n1->positive && !n2->positive) {
 		return true;
 	}
@@ -227,13 +236,142 @@ my_int* int_sub(my_int* n1, my_int* n2) {
 }
 
 
-my_int* int_mul(my_int* n1, my_int* n2) { return NULL; }
+my_int* shift_left_inplace(my_int* n) {
+	if (is_zero(n)) {
+		return n;
+	}
+	i_node* temp = (i_node*)malloc(sizeof(i_node));
+	temp->digit = 0;
+	temp->right = NULL;
+	temp->left = n->last;
+	n->last->right = temp;
+	n->last = temp;
+	n->amount_of_digits++;
+	return n;
+}
 
 
-my_int* int_div(my_int* n1, my_int* n2) { return NULL; }
+my_int* shift_right_inplace(my_int* n) {
+	if (is_zero(n)) {
+		return n;
+	}
+	if (n->amount_of_digits == 1) {
+		n->head->digit = 1;
+	}
+	i_node* temp = n->last;
+	n->last = n->last->left;
+	n->last->right = NULL;
+	free(temp);
+	n->amount_of_digits--;
+	return n;
+}
 
 
-my_int* int_pow(my_int* n1, my_int* n2) { return NULL; }
+my_int* int_mul(my_int* n1, my_int* n2) { 
+	my_int* result = init_int(0);
+	my_int* demo_n1 = int_abs(n1);
+	my_int* demo_n2 = int_abs(n2);
+	i_node* digit_of_n2 = demo_n2->last;
+	for (int i = 0; i < demo_n2->amount_of_digits; i++) {
+		for (int j = 0; j < digit_of_n2->digit; j++) {
+			my_int* result1 = int_add(result, demo_n1);
+			delete_int(result);
+			result = result1;
+		}
+		digit_of_n2 = digit_of_n2->left;
+		shift_left_inplace(demo_n1);
+	}
+	for (int i = 0; i < demo_n2->amount_of_digits; i++) {
+		shift_right_inplace(demo_n1);
+	}
+
+	result->positive = n1->positive == n2->positive;
+	delete_int(demo_n1);
+	delete_int(demo_n2);
+	return result; 
+}
+
+
+my_int* int_div(my_int* n1, my_int* n2) { 
+	my_int* result = init_int(0);
+	my_int* demo_n1 = int_abs(n1);
+	my_int* demo_n2 = int_abs(n2);
+	my_int* one = init_int(1);
+	int count = 0;
+	while (!is_bigger(demo_n2, demo_n1)) {
+		count++;
+		shift_left_inplace(demo_n2);
+	}
+	if (count == 0) {
+		return result;
+	}
+	for (int i = 0; i < count; i++) {
+		shift_right_inplace(demo_n2);
+		shift_left_inplace(result);
+		while (!is_bigger(demo_n2, demo_n1)){
+			my_int* result1 = result;
+			result = int_add(one, result);
+			delete_int(result1);
+			my_int* new_demo_n1 = int_sub(demo_n1, demo_n2);
+			delete_int(demo_n1);
+			demo_n1 = new_demo_n1;
+		}
+	}
+	delete_int(demo_n2);
+	delete_int(one);
+	delete_int(demo_n1);
+
+	result->positive = n1->positive == n2->positive; 
+	return result;
+}
+
+
+my_int* int_mod(my_int* n1, my_int* n2) {
+	my_int* div = int_div(n1, n2);
+	my_int* almost_n1 = int_mul(div, n2);
+	delete_int(div);
+	my_int* result = int_sub(n1, almost_n1);
+	delete_int(almost_n1);
+	return result;
+}
+
+
+bool is_even(my_int* n) { // I dont look only at the last digit in case we want to change the base to not even number 
+	my_int* two = init_int(2);
+	my_int* mod2 = int_mod(n, two);
+	bool result = is_zero(mod2);
+	delete_int(two);
+	delete_int(mod2);
+	return result;
+}
+
+
+my_int* int_pow(my_int* n1, my_int* n2) {
+	if (!n2->positive) {
+		return init_int(0);
+	}
+	if (is_zero(n2)) {
+		return init_int(1);
+	}
+	if (!is_even(n2)) {
+		my_int* one = init_int(1);
+		my_int* n2_minus_1 = int_sub(n2, one);
+		delete_int(one);
+		my_int* last_result = int_pow(n1, n2_minus_1);
+		delete_int(n2_minus_1);
+		my_int* result = int_mul(last_result, n1);
+		delete_int(last_result);
+		return result;
+	}
+	my_int* two = init_int(2);
+	my_int* half_n2 = int_div(n2, two);
+	delete_int(two);
+	my_int* last_result = int_pow(n1, half_n2);
+	delete_int(half_n2);
+	my_int* result = int_mul(last_result, last_result);
+	delete_int(last_result);
+	return result;
+}
 
 
 my_int* int_abs(my_int* n) { 
@@ -291,18 +429,22 @@ my_int* int_minus_inplace(my_int* n) {
 
 
 int print_int(my_int* n) {
-	if (!n->positive) {
-		printf("-");
-	}
-	int count = 0;
-	i_node* temp = n->head;
-	while (temp != NULL) {
-		count++;
-		printf("%d", temp->digit);
-		temp = temp->right;
-	}
-	if (count != n->amount_of_digits) {
-		printf("bad %d %d", count, n->amount_of_digits);
+	if(!is_zero(n)){
+		if (!n->positive) {
+			printf("-");
+		}
+		int count = 0;
+		i_node* temp = n->head;
+		while (temp != NULL) {
+			count++;
+			printf("%d", temp->digit);
+			temp = temp->right;
+		}
+		if (count != n->amount_of_digits) {
+			printf("bad %d %d", count, n->amount_of_digits);
+		}
+	} else {
+		printf("0");
 	}
 	return 1;
 }

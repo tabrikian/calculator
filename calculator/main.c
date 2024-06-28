@@ -42,13 +42,6 @@ int execute_operator(stack* s, char _operator) {
 	default:
 		break;
 	}
-
-	print_int(num1);
-	printf(" %c ", _operator);
-	print_int(num2);
-	printf(" = ");
-	print_int(res);
-	printf("\n");
 	
 	delete_int(num1);
 	delete_int(num2);
@@ -133,7 +126,7 @@ int op_rate(token_t* op) {
 		rate = 4;
 		break;
 	default: //function
-		rate = 1;
+		rate = 5;
 		break;
 	}
 	return rate;
@@ -181,7 +174,6 @@ queue* shunting_yard(queue* tokens) {
 		queue_push(output, stack_pop(operators_stack));
 
 	queue_delete(tokens);
-	print_queue(output);
 	return output;
 }
 
