@@ -11,7 +11,7 @@ typedef struct node {
 	struct node* left;
 } i_node;
 
-typedef struct my_int {
+typedef struct my_int { // head 1 2 3 last
 	i_node* head; // most significant digit
 	i_node* last; // least significant digit
 	bool positive;

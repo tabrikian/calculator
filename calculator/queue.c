@@ -100,5 +100,6 @@ queue* to_negative_numbers(queue* exp) {
 		}
 	}
 	queue_delete(exp);
+	print_queue(new_exp);
 	return new_exp;
 }

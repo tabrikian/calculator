@@ -91,6 +91,7 @@ my_int* int_add_possitive(my_int* n1, my_int* n2) {
 		i_node* temp = (i_node*)malloc(sizeof(i_node));
 		temp->digit = (i1->digit + i2->digit + carry) % BASE;
 		carry = (i1->digit + i2->digit + carry) / BASE;
+		number->head->left = temp;
 		temp->right = number->head;
 		temp->left = NULL;
 		number->head = temp;
@@ -102,6 +103,7 @@ my_int* int_add_possitive(my_int* n1, my_int* n2) {
 		i_node* temp = (i_node*)malloc(sizeof(i_node));
 		temp->digit = (i1->digit + carry) % BASE;
 		carry = (i1->digit + carry) / BASE;
+		number->head->left = temp;
 		temp->right = number->head;
 		temp->left = NULL;
 		number->head = temp;
@@ -111,6 +113,7 @@ my_int* int_add_possitive(my_int* n1, my_int* n2) {
 		number->amount_of_digits++;
 		i_node* temp = (i_node*)malloc(sizeof(i_node));
 		temp->digit = carry % BASE;
+		number->head->left = temp;
 		temp->right = number->head;
 		temp->left = NULL;
 		number->head = temp;
@@ -145,6 +148,7 @@ my_int* int_sub_possitive(my_int* n1, my_int* n2) {
 		i_node* temp = (i_node*)malloc(sizeof(i_node));
 		need_carry = (i1->digit < i2->digit + used_carry);
 		temp->digit = need_carry * BASE + i1->digit - i2->digit - used_carry;
+		number->head->left = temp;
 		used_carry = need_carry;
 		temp->right = number->head;
 		temp->left = NULL;
@@ -157,6 +161,7 @@ my_int* int_sub_possitive(my_int* n1, my_int* n2) {
 		i_node* temp = (i_node*)malloc(sizeof(i_node));
 		need_carry = (i1->digit < used_carry);
 		temp->digit = need_carry * BASE + i1->digit - used_carry;
+		number->head->left = temp;
 		used_carry = need_carry;
 		temp->right = number->head;
 		temp->left = NULL;
@@ -166,6 +171,7 @@ my_int* int_sub_possitive(my_int* n1, my_int* n2) {
 	i_node* temp = number->head;
 	while (number->amount_of_digits > 1 && number->head->digit == 0){
 		number->amount_of_digits--;
+		number->head->left = temp;
 		number->head = number->head->right;
 		number->head->left = NULL;
 		free(temp);

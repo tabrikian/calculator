@@ -20,10 +20,6 @@ queue* shunting_yard(queue* tokens);
 int execute_operator(stack* s, char _operator) {
 	my_int* num2 = delete_token(stack_pop(s));
 	my_int* num1 = delete_token(stack_pop(s));
-	print_int(num1);
-	printf("\n");
-	print_int(num2);
-	printf("%c\n", _operator);
 
 
 	my_int* res = NULL;
@@ -47,6 +43,13 @@ int execute_operator(stack* s, char _operator) {
 		break;
 	}
 
+	print_int(num1);
+	printf(" %c ", _operator);
+	print_int(num2);
+	printf(" = ");
+	print_int(res);
+	printf("\n");
+	
 	delete_int(num1);
 	delete_int(num2);
 	stack_push(s, create_by_int(res));
@@ -156,7 +159,7 @@ queue* shunting_yard(queue* tokens) {
 				if (token->is_operator) {
 					while (!stack_is_empty(operators_stack) &&
 						!(stack_top(operators_stack)->_operator == '(') &&
-						!is_less_precedence(token, stack_top(operators_stack)))
+						is_less_precedence(stack_top(operators_stack), token))
 						queue_push(output, stack_pop(operators_stack));
 					stack_push(operators_stack, token);
 				}
@@ -178,6 +181,7 @@ queue* shunting_yard(queue* tokens) {
 		queue_push(output, stack_pop(operators_stack));
 
 	queue_delete(tokens);
+	print_queue(output);
 	return output;
 }
 

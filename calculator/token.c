@@ -130,11 +130,12 @@ token_t* create_by_function(char* function) {
 
  int print_token(token_t* token) {
 	 if (token->is_char)
-		 printf("%c ", token->_operator);
+		 printf("%c", token->_operator);
 	 if (token->is_num)
 		 print_int(token->num);
 	 if (token->is_function)
-		 printf("%s ", token->function);
+		 printf("%s", token->function);
+	 printf(" ");
 	 return 1;
  }
 
