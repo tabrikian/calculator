@@ -22,6 +22,6 @@ bool stack_t_is_empty(stack_t* s);
 
 int stack_t_delete(stack_t* s);
 
-int print_tokens(node_t* tokens);
+int print_tokens(node_t* tokens); // print tokens in a node "link list", used to print a stack and a queue
 
 int print_stack_t(stack_t* s);

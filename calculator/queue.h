@@ -20,6 +20,6 @@ int queue_t_delete(queue_t* q);
 
 int print_queue_t(queue_t* q);
 
-queue_t* parse_tokens(char** input);
+queue_t* parse_tokens(char** input); // parse a string to queue of tokens
 
-queue_t* to_negative_numbers(queue_t* exp);
+queue_t* to_negative_numbers(queue_t* exp); // parse a queue of tokens to new queue with negative numbers
