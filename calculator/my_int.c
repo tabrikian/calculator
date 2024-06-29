@@ -1,8 +1,8 @@
 #include "my_int.h"
 
 
-my_int* init_int(int n) {
-	my_int* number = (my_int*)malloc(sizeof(my_int));
+my_int_t* init_int(int n) {
+	my_int_t* number = (my_int_t*)malloc(sizeof(my_int_t));
 	number->positive = (n >= 0);
 	if (n < 0) {
 		n = -n;
@@ -29,12 +29,12 @@ my_int* init_int(int n) {
 }
 
 
-bool is_zero(my_int* n) {
+bool is_zero(my_int_t* n) {
 	return n->head->digit == 0;
 }
 
 
-bool is_bigger(my_int* n1, my_int* n2) { 
+bool is_bigger(my_int_t* n1, my_int_t* n2) { 
 	if (is_zero(n1) && is_zero(n2)) {
 		return false;
 	}
@@ -77,13 +77,13 @@ bool is_bigger(my_int* n1, my_int* n2) {
 }
 
 
-my_int* int_add_possitive(my_int* n1, my_int* n2) {
+my_int_t* int_add_possitive(my_int_t* n1, my_int_t* n2) {
 	if (!is_bigger(n1, n2)) {
-		my_int* temp = n1;
+		my_int_t* temp = n1;
 		n1 = n2;
 		n2 = temp;
 	}
-	my_int* number = (my_int*)malloc(sizeof(my_int));
+	my_int_t* number = (my_int_t*)malloc(sizeof(my_int_t));
 	number->positive = true;
 	number->head = (i_node*)malloc(sizeof(i_node));
 	number->last = number->head;
@@ -131,15 +131,15 @@ my_int* int_add_possitive(my_int* n1, my_int* n2) {
 }
 
 
-my_int* int_sub_possitive(my_int* n1, my_int* n2) {
+my_int_t* int_sub_possitive(my_int_t* n1, my_int_t* n2) {
 	bool possitive = true;
 	if (is_bigger(n2, n1)) {
-		my_int* temp = n1;
+		my_int_t* temp = n1;
 		n1 = n2;
 		n2 = temp;
 		possitive = false;
 	}
-	my_int* number = (my_int*)malloc(sizeof(my_int));
+	my_int_t* number = (my_int_t*)malloc(sizeof(my_int_t));
 	number->positive = possitive;
 	number->head = (i_node*)malloc(sizeof(i_node));
 	number->last = number->head;
@@ -190,11 +190,11 @@ my_int* int_sub_possitive(my_int* n1, my_int* n2) {
 }
 
 
-my_int* int_add(my_int * n1, my_int * n2) {
+my_int_t* int_add(my_int_t * n1, my_int_t * n2) {
 	if (!n1->positive && !n2->positive) {
-		my_int* demo1 = int_minus_inplace(int_copy(n1));
-		my_int* demo2 = int_minus_inplace(int_copy(n2));
-		my_int* result = int_add_possitive(demo1, demo2);
+		my_int_t* demo1 = int_minus_inplace(int_copy(n1));
+		my_int_t* demo2 = int_minus_inplace(int_copy(n2));
+		my_int_t* result = int_add_possitive(demo1, demo2);
 		int_minus_inplace(result);
 		delete_int(demo1);
 		delete_int(demo2);
@@ -204,8 +204,8 @@ my_int* int_add(my_int * n1, my_int * n2) {
 		n1, n2 = n2, n1;
 	}
 	if (!n2->positive) {
-		my_int* demo = int_minus_inplace(int_copy(n2));
-		my_int* result = int_sub_possitive(n1, demo);
+		my_int_t* demo = int_minus_inplace(int_copy(n2));
+		my_int_t* result = int_sub_possitive(n1, demo);
 		delete_int(demo);
 		return result;
 	}
@@ -213,11 +213,11 @@ my_int* int_add(my_int * n1, my_int * n2) {
 }
 
 
-my_int* int_sub(my_int* n1, my_int* n2) {
+my_int_t* int_sub(my_int_t* n1, my_int_t* n2) {
 	if (!n1->positive && !n2->positive) {
-		my_int* demo1 = int_minus_inplace(int_copy(n1));
-		my_int* demo2 = int_minus_inplace(int_copy(n2));
-		my_int* result = int_sub_possitive(demo1, demo2);
+		my_int_t* demo1 = int_minus_inplace(int_copy(n1));
+		my_int_t* demo2 = int_minus_inplace(int_copy(n2));
+		my_int_t* result = int_sub_possitive(demo1, demo2);
 		int_minus_inplace(result);
 		delete_int(demo1);
 		delete_int(demo2);
@@ -227,8 +227,8 @@ my_int* int_sub(my_int* n1, my_int* n2) {
 		n1, n2 = n2, n1;
 	}
 	if (!n2->positive) {
-		my_int* demo = int_minus_inplace(int_copy(n2));
-		my_int* result = int_add_possitive(n1, demo);
+		my_int_t* demo = int_minus_inplace(int_copy(n2));
+		my_int_t* result = int_add_possitive(n1, demo);
 		delete_int(demo);
 		return result;
 	}
@@ -236,7 +236,7 @@ my_int* int_sub(my_int* n1, my_int* n2) {
 }
 
 
-my_int* shift_left_inplace(my_int* n) {
+my_int_t* shift_left_inplace(my_int_t* n) {
 	if (is_zero(n)) {
 		return n;
 	}
@@ -251,7 +251,7 @@ my_int* shift_left_inplace(my_int* n) {
 }
 
 
-my_int* shift_right_inplace(my_int* n) {
+my_int_t* shift_right_inplace(my_int_t* n) {
 	if (is_zero(n)) {
 		return n;
 	}
@@ -267,14 +267,14 @@ my_int* shift_right_inplace(my_int* n) {
 }
 
 
-my_int* int_mul(my_int* n1, my_int* n2) { 
-	my_int* result = init_int(0);
-	my_int* demo_n1 = int_abs(n1);
-	my_int* demo_n2 = int_abs(n2);
+my_int_t* int_mul(my_int_t* n1, my_int_t* n2) { 
+	my_int_t* result = init_int(0);
+	my_int_t* demo_n1 = int_abs(n1);
+	my_int_t* demo_n2 = int_abs(n2);
 	i_node* digit_of_n2 = demo_n2->last;
 	for (int i = 0; i < demo_n2->amount_of_digits; i++) {
 		for (int j = 0; j < digit_of_n2->digit; j++) {
-			my_int* result1 = int_add(result, demo_n1);
+			my_int_t* result1 = int_add(result, demo_n1);
 			delete_int(result);
 			result = result1;
 		}
@@ -292,11 +292,11 @@ my_int* int_mul(my_int* n1, my_int* n2) {
 }
 
 
-my_int* int_div(my_int* n1, my_int* n2) { 
-	my_int* result = init_int(0);
-	my_int* demo_n1 = int_abs(n1);
-	my_int* demo_n2 = int_abs(n2);
-	my_int* one = init_int(1);
+my_int_t* int_div(my_int_t* n1, my_int_t* n2) { 
+	my_int_t* result = init_int(0);
+	my_int_t* demo_n1 = int_abs(n1);
+	my_int_t* demo_n2 = int_abs(n2);
+	my_int_t* one = init_int(1);
 	int count = 0;
 	while (!is_bigger(demo_n2, demo_n1)) {
 		count++;
@@ -309,10 +309,10 @@ my_int* int_div(my_int* n1, my_int* n2) {
 		shift_right_inplace(demo_n2);
 		shift_left_inplace(result);
 		while (!is_bigger(demo_n2, demo_n1)){
-			my_int* result1 = result;
+			my_int_t* result1 = result;
 			result = int_add(one, result);
 			delete_int(result1);
-			my_int* new_demo_n1 = int_sub(demo_n1, demo_n2);
+			my_int_t* new_demo_n1 = int_sub(demo_n1, demo_n2);
 			delete_int(demo_n1);
 			demo_n1 = new_demo_n1;
 		}
@@ -326,19 +326,19 @@ my_int* int_div(my_int* n1, my_int* n2) {
 }
 
 
-my_int* int_mod(my_int* n1, my_int* n2) {
-	my_int* div = int_div(n1, n2);
-	my_int* almost_n1 = int_mul(div, n2);
+my_int_t* int_mod(my_int_t* n1, my_int_t* n2) {
+	my_int_t* div = int_div(n1, n2);
+	my_int_t* almost_n1 = int_mul(div, n2);
 	delete_int(div);
-	my_int* result = int_sub(n1, almost_n1);
+	my_int_t* result = int_sub(n1, almost_n1);
 	delete_int(almost_n1);
 	return result;
 }
 
 
-bool is_even(my_int* n) { // I dont look only at the last digit in case we want to change the base to not even number 
-	my_int* two = init_int(2);
-	my_int* mod2 = int_mod(n, two);
+bool is_even(my_int_t* n) { // I dont look only at the last digit in case we want to change the base to not even number 
+	my_int_t* two = init_int(2);
+	my_int_t* mod2 = int_mod(n, two);
 	bool result = is_zero(mod2);
 	delete_int(two);
 	delete_int(mod2);
@@ -346,7 +346,7 @@ bool is_even(my_int* n) { // I dont look only at the last digit in case we want 
 }
 
 
-my_int* int_pow(my_int* n1, my_int* n2) {
+my_int_t* int_pow(my_int_t* n1, my_int_t* n2) {
 	if (!n2->positive) {
 		return init_int(0);
 	}
@@ -354,35 +354,35 @@ my_int* int_pow(my_int* n1, my_int* n2) {
 		return init_int(1);
 	}
 	if (!is_even(n2)) {
-		my_int* one = init_int(1);
-		my_int* n2_minus_1 = int_sub(n2, one);
+		my_int_t* one = init_int(1);
+		my_int_t* n2_minus_1 = int_sub(n2, one);
 		delete_int(one);
-		my_int* last_result = int_pow(n1, n2_minus_1);
+		my_int_t* last_result = int_pow(n1, n2_minus_1);
 		delete_int(n2_minus_1);
-		my_int* result = int_mul(last_result, n1);
+		my_int_t* result = int_mul(last_result, n1);
 		delete_int(last_result);
 		return result;
 	}
-	my_int* two = init_int(2);
-	my_int* half_n2 = int_div(n2, two);
+	my_int_t* two = init_int(2);
+	my_int_t* half_n2 = int_div(n2, two);
 	delete_int(two);
-	my_int* last_result = int_pow(n1, half_n2);
+	my_int_t* last_result = int_pow(n1, half_n2);
 	delete_int(half_n2);
-	my_int* result = int_mul(last_result, last_result);
+	my_int_t* result = int_mul(last_result, last_result);
 	delete_int(last_result);
 	return result;
 }
 
 
-my_int* int_abs(my_int* n) { 
-	my_int* ret = int_copy(n);
+my_int_t* int_abs(my_int_t* n) { 
+	my_int_t* ret = int_copy(n);
 	ret->positive = true;
 	return ret;
 }
 
 
-my_int* int_copy(my_int* n) {
-	my_int* number = (my_int*)malloc(sizeof(my_int));
+my_int_t* int_copy(my_int_t* n) {
+	my_int_t* number = (my_int_t*)malloc(sizeof(my_int_t));
 	number->positive = n->positive;
 	number->amount_of_digits = n->amount_of_digits;
 
@@ -406,7 +406,7 @@ my_int* int_copy(my_int* n) {
 }
 
 
-my_int* int_min(my_int* n1, my_int* n2) { 
+my_int_t* int_min(my_int_t* n1, my_int_t* n2) { 
 	if (is_bigger(n1, n2)) {
 		return int_copy(n2);
 	}
@@ -414,7 +414,7 @@ my_int* int_min(my_int* n1, my_int* n2) {
 }
 
 
-my_int* int_max(my_int* n1, my_int* n2) { 
+my_int_t* int_max(my_int_t* n1, my_int_t* n2) { 
 	if (is_bigger(n1, n2)) {
 		return int_copy(n1);
 	}
@@ -422,13 +422,13 @@ my_int* int_max(my_int* n1, my_int* n2) {
 }
 
 
-my_int* int_minus_inplace(my_int* n) { 
+my_int_t* int_minus_inplace(my_int_t* n) { 
 	n->positive = !n->positive;
 	return n;
 }
 
 
-int print_int(my_int* n) {
+int print_int(my_int_t* n) {
 	if(!is_zero(n)){
 		if (!n->positive) {
 			printf("-");
@@ -450,7 +450,7 @@ int print_int(my_int* n) {
 }
 
 
-int delete_int(my_int* n) { 
+int delete_int(my_int_t* n) { 
 	i_node* temp = n->head;
 	while (n->head != NULL){
 		n->head = n->head->right;

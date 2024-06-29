@@ -1,25 +1,25 @@
 #include "stack.h"
 
-typedef struct queue {
+typedef struct queue_t {
 	node_t* head;
 	node_t* last;
-} queue;
+} queue_t;
 
 
-queue* init_queue();
+queue_t* init_queue_t();
 
-int queue_push(queue* q, token_t* item);
+int queue_t_push(queue_t* q, token_t* item);
 
-token_t* queue_top(queue* q);
+token_t* queue_t_top(queue_t* q);
 
-token_t* queue_pop(queue* q);
+token_t* queue_t_pop(queue_t* q);
 
-bool queue_is_empty(queue* q);
+bool queue_t_is_empty(queue_t* q);
 
-int queue_delete(queue* q);
+int queue_t_delete(queue_t* q);
 
-int print_queue(queue* q);
+int print_queue_t(queue_t* q);
 
-queue* parse_tokens(char** input);
+queue_t* parse_tokens(char** input);
 
-queue* to_negative_numbers(queue* exp);
+queue_t* to_negative_numbers(queue_t* exp);

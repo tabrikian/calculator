@@ -1,28 +1,12 @@
-#include <string.h>
-#include <math.h>
-#include "queue.h"
-
-#define MAX_LENGTH 1000
-
-int execute_operator(stack* s, char _operator);
-
-int execute_function(stack* s, char* function);
-
-int op_rate(token_t* op);
-
-my_int* evaluate_rpn(queue* expression);
-
-bool is_less_precedence(token_t* op1, token_t* op2);
-
-queue* shunting_yard(queue* tokens);
+#include "main.h"
 
 
-int execute_operator(stack* s, char _operator) {
-	my_int* num2 = delete_token(stack_pop(s));
-	my_int* num1 = delete_token(stack_pop(s));
+int execute_operator(stack_t* s, char _operator) {
+	my_int_t* num2 = delete_token(stack_t_pop(s));
+	my_int_t* num1 = delete_token(stack_t_pop(s));
 
 
-	my_int* res = NULL;
+	my_int_t* res = NULL;
 	switch (_operator) {
 	case '+':
 		res = int_add(num1, num2);
@@ -45,31 +29,31 @@ int execute_operator(stack* s, char _operator) {
 	
 	delete_int(num1);
 	delete_int(num2);
-	stack_push(s, create_by_int(res));
+	stack_t_push(s, create_by_int(res));
 	return 1;
 }
 
 
-int execute_function(stack* s, char* function) {
-	my_int* res = NULL;
+int execute_function(stack_t* s, char* function) {
+	my_int_t* res = NULL;
 	if (strcmp(function, "MIN") == 0) {
-		my_int* num1 = delete_token(stack_pop(s));
-		my_int* num2 = delete_token(stack_pop(s));
+		my_int_t* num1 = delete_token(stack_t_pop(s));
+		my_int_t* num2 = delete_token(stack_t_pop(s));
 		res = int_min(num1, num2);
 		delete_int(num1);
 		delete_int(num2);
 	}
 	else {
 		if (strcmp(function, "MAX") == 0) {
-			my_int* num1 = delete_token(stack_pop(s));
-			my_int* num2 = delete_token(stack_pop(s));
+			my_int_t* num1 = delete_token(stack_t_pop(s));
+			my_int_t* num2 = delete_token(stack_t_pop(s));
 			res = int_max(num1, num2);
 			delete_int(num1);
 			delete_int(num2);
 		}
 		else {
 			if (strcmp(function, "ABS") == 0) {
-				my_int* num = delete_token(stack_pop(s));
+				my_int_t* num = delete_token(stack_t_pop(s));
 				res = int_abs(num);
 				delete_int(num);
 			}
@@ -80,36 +64,34 @@ int execute_function(stack* s, char* function) {
 		}
 	}
 
-	stack_push(s, create_by_int(res));
+	stack_t_push(s, create_by_int(res));
 	return 1;
 }
 
 
-my_int* evaluate_rpn(queue* expression) {
-	stack* s = init_stack();
-	while (!queue_is_empty(expression)) {
-		while (!queue_is_empty(expression) && queue_top(expression)->is_num) {
-			stack_push(s, queue_pop(expression));
-		}
-		while (!queue_is_empty(expression) && !(queue_top(expression)->is_num)) {
-			if (queue_top(expression)->is_char)
-				execute_operator(s, queue_top(expression)->_operator);
-			if (queue_top(expression)->is_function)
-				execute_function(s, queue_top(expression)->function);
+my_int_t* evaluate_rpn(queue_t* expression) {
+	stack_t* s = init_stack_t();
+	while (!queue_t_is_empty(expression)) {
+		if (queue_t_top(expression)->is_num) {
+			stack_t_push(s, queue_t_pop(expression));
+		} else{
+			if (queue_t_top(expression)->is_char)
+				execute_operator(s, queue_t_top(expression)->parenthesis_or_operator);
+			if (queue_t_top(expression)->is_function)
+				execute_function(s, queue_t_top(expression)->function);
 
-
-			free(queue_pop(expression));
+			delete_token(queue_t_pop(expression));
 		}
 	}
-	token_t* res = stack_pop(s);
-	stack_delete(s);
+	token_t* res = stack_t_pop(s);
+	stack_t_delete(s);
 	return delete_token(res);
 }
 
 
 int op_rate(token_t* op) {
 	int rate;
-	switch (op->_operator) {
+	switch (op->parenthesis_or_operator) {
 	case '+':
 		rate = 2;
 		break;
@@ -138,42 +120,47 @@ bool is_less_precedence(token_t* op1, token_t* op2) {
 }
 
 
-queue* shunting_yard(queue* tokens) {
-	queue* output = init_queue();
-	stack* operators_stack = init_stack();
-	while (!queue_is_empty(tokens)) {
-		token_t* token = queue_pop(tokens);
+int handel_chars(token_t* token, stack_t* operators_stack_t, queue_t* output) {
+	if (token->is_operator) {
+		while (!stack_t_is_empty(operators_stack_t) &&
+			!(stack_t_top(operators_stack_t)->parenthesis_or_operator == '(') &&
+			is_less_precedence(stack_t_top(operators_stack_t), token))
+			queue_t_push(output, stack_t_pop(operators_stack_t));
+		stack_t_push(operators_stack_t, token);
+	}
+	else {
+		if (token->parenthesis_or_operator == '(')
+			stack_t_push(operators_stack_t, token);
+		else {
+			while (!stack_t_is_empty(operators_stack_t) &&
+				!(stack_t_top(operators_stack_t)->parenthesis_or_operator == '('))
+				queue_t_push(output, stack_t_pop(operators_stack_t));
+			delete_token(stack_t_pop(operators_stack_t));
+			delete_token(token);
+		}
+	}
+	return 1;
+}
+
+queue_t* shunting_yard(queue_t* tokens) {
+	queue_t* output = init_queue_t();
+	stack_t* operators_stack_t = init_stack_t();
+	while (!queue_t_is_empty(tokens)) {
+		token_t* token = queue_t_pop(tokens);
 		if (token->is_num)
-			queue_push(output, token);
+			queue_t_push(output, token);
 		else {
 			if (token->is_function)
-				stack_push(operators_stack, token);
+				stack_t_push(operators_stack_t, token);
 			else {
-				if (token->is_operator) {
-					while (!stack_is_empty(operators_stack) &&
-						!(stack_top(operators_stack)->_operator == '(') &&
-						is_less_precedence(stack_top(operators_stack), token))
-						queue_push(output, stack_pop(operators_stack));
-					stack_push(operators_stack, token);
-				}
-				else {
-					if (token->_operator == '(')
-						stack_push(operators_stack, token);
-					else {
-						while (!stack_is_empty(operators_stack) &&
-							!(stack_top(operators_stack)->_operator == '('))
-							queue_push(output, stack_pop(operators_stack));
-						delete_token(stack_pop(operators_stack));
-						delete_token(token);
-					}
-				}
+				handel_chars(token, operators_stack_t, output);
 			}
 		}
 	}
-	while (!stack_is_empty(operators_stack))
-		queue_push(output, stack_pop(operators_stack));
+	while (!stack_t_is_empty(operators_stack_t))
+		queue_t_push(output, stack_t_pop(operators_stack_t));
 
-	queue_delete(tokens);
+	queue_t_delete(tokens);
 	return output;
 }
 
